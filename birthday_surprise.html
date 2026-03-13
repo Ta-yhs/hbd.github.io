@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="lo">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ສຸກສັນວັນເກີດທີ່ຮັກ! 💖</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Quicksand:wght@400;600;700&family=Noto+Sans+Lao+Looped:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+      :root {
+        --primary-pink: #ffb6c1;
+        --light-pink: #ffe4e1;
+        --primary-green: #d4f0f0;
+        --dark-pink: #ff69b4;
+        --text-color: #555;
+        --bg-gradient: linear-gradient(135deg, #e0f2e9 0%, #ffdae9 100%);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Noto Sans Lao Looped", "Quicksand", sans-serif;
+        background: var(--bg-gradient);
+        color: var(--text-color);
+        min-height: 100vh;
+        overflow-x: hidden;
+        text-align: center;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: "Noto Sans Lao Looped", "Comfortaa", cursive;
+        color: var(--dark-pink);
+        margin-bottom: 15px;
+        text-shadow: 1px 1px 2px rgba(255, 105, 180, 0.2);
+      }
+
+      button {
+        background-color: white;
+        color: var(--dark-pink);
+        border: 2px solid var(--primary-pink);
+        padding: 12px 24px;
+        font-size: 1.1rem;
+        border-radius: 30px;
+        cursor: pointer;
+        font-family: "Noto Sans Lao Looped", "Quicksand", sans-serif;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(255, 105, 180, 0.2);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      button:hover {
+        background-color: var(--primary-pink);
+        color: white;
+        transform: translateY(-4px) scale(1.05);
+        box-shadow: 0 8px 25px rgba(255, 105, 180, 0.5);
+      }
+
+      /* Screens */
+      #opening-screen,
+      #main-screen {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        transition:
+          opacity 1s ease,
+          visibility 1s;
+      }
+
+      #main-screen {
+        opacity: 0;
+        visibility: hidden;
+        justify-content: flex-start;
+        padding: 40px 20px;
+      }
+
+      .opening-box {
+        background: rgba(255, 255, 255, 0.8);
+        padding: 40px 20px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        backdrop-filter: blur(10px);
+        max-width: 400px;
+        width: 100%;
+      }
+
+      /* Floating Hearts Background */
+      .hearts-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: -1;
+        overflow: hidden;
+      }
+
+      .heart-float {
+        position: absolute;
+        color: var(--primary-pink);
+        opacity: 0.6;
+        animation: floatUp linear infinite;
+      }
+
+      @keyframes floatUp {
+        0% {
+          transform: translateY(100vh) scale(0);
+          opacity: 0;
+        }
+        10% {
+          opacity: 0.6;
+        }
+        90% {
+          opacity: 0.6;
+        }
+        100% {
+          transform: translateY(-100px) scale(1);
+          opacity: 0;
+        }
+      }
+
+      section {
+        background: rgba(255, 255, 255, 0.85);
+        margin: 20px auto;
+        max-width: 600px;
+        width: 100%;
+        padding: 40px 30px;
+        border-radius: 35px;
+        box-shadow: 0 10px 35px rgba(255, 182, 193, 0.4);
+        backdrop-filter: blur(8px);
+        position: relative;
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      section.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .sweet-message {
+        font-size: 1.2rem;
+        line-height: 1.6;
+        color: #666;
+        margin-top: 10px;
+      }
+
+      /* Music Player */
+      #music-control {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: white;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        z-index: 100;
+        font-size: 1.5rem;
+        color: var(--dark-pink);
+        transition: transform 0.3s ease;
+      }
+
+      #music-control:hover {
+        transform: scale(1.1);
+      }
+
+      /* Gallery */
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      @media (min-width: 600px) {
+        .gallery {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      .gallery img {
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        cursor: pointer;
+      }
+
+      .gallery img:active {
+        transform: scale(1.15);
+        z-index: 10;
+      }
+
+      /* Heart Game */
+      #interactive-heart {
+        font-size: 5rem;
+        cursor: pointer;
+        display: inline-block;
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        user-select: none;
+        filter: drop-shadow(0 0 10px rgba(255, 105, 180, 0.5));
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          filter: drop-shadow(0 0 5px rgba(255, 105, 180, 0.4));
+        }
+        50% {
+          filter: drop-shadow(0 0 20px rgba(255, 105, 180, 0.8));
+        }
+        100% {
+          filter: drop-shadow(0 0 5px rgba(255, 105, 180, 0.4));
+        }
+      }
+
+      #game-message {
+        margin-top: 15px;
+        font-weight: bold;
+        color: var(--dark-pink);
+        min-height: 24px;
+        opacity: 0;
+        transition: opacity 0.5s;
+      }
+
+      /* Sparkles for birthday section */
+      .sparkle {
+        position: absolute;
+        font-size: 1.2rem;
+        animation: twinkle 1.5s infinite alternate;
+      }
+
+      @keyframes twinkle {
+        0% {
+          opacity: 0.2;
+          transform: scale(0.8);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1.2);
+        }
+      }
+
+      /* Glowing Text Effect for Birthday Message */
+      .glow-text {
+        text-shadow: 0 0 10px rgba(255, 105, 180, 0.6), 0 0 20px rgba(255, 105, 180, 0.4);
+        animation: softGlow 2s infinite alternate;
+      }
+
+      @keyframes softGlow {
+        from { text-shadow: 0 0 10px rgba(255, 105, 180, 0.6), 0 0 20px rgba(255, 105, 180, 0.4); }
+        to { text-shadow: 0 0 15px rgba(255, 105, 180, 0.8), 0 0 30px rgba(255, 105, 180, 0.6); }
+      }
+
+      /* Floating Cats */
+      .cat-float {
+        position: fixed;
+        font-size: 2rem;
+        opacity: 0.4;
+        pointer-events: none;
+        z-index: 5;
+        filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        animation: floatCat linear infinite;
+      }
+
+      @keyframes floatCat {
+        0% { transform: translateY(110vh) translateX(0) scale(0.8) rotate(-10deg); opacity: 0; }
+        10% { opacity: 0.5; }
+        50% { transform: translateY(50vh) translateX(30px) scale(1) rotate(10deg); }
+        90% { opacity: 0.5; }
+        100% { transform: translateY(-20vh) translateX(-20px) scale(0.9) rotate(-15deg); opacity: 0; }
+      }
+
+      /* Paw Prints on Click */
+      .paw-print {
+        position: absolute;
+        font-size: 1.5rem;
+        pointer-events: none;
+        z-index: 9999;
+        color: var(--primary-pink);
+        opacity: 0.8;
+        transform: translate(-50%, -50%);
+        animation: fadeAndScaleup 1s ease forwards;
+      }
+
+      @keyframes fadeAndScaleup {
+        0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.8; }
+        100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+      }
+      
+      /* Button Heart Pop */
+      .button-heart-pop {
+        position: absolute;
+        pointer-events: none;
+        animation: popUpFloat 1s ease-out forwards;
+        z-index: 100;
+        font-size: 1.2rem;
+      }
+      
+      @keyframes popUpFloat {
+        0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+        100% { transform: translate(-50%, -150%) scale(1.2); opacity: 0; }
+      }
+
+      /* Revealed Image */
+      #revealed-image {
+        display: none;
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin: 0 auto;
+        box-shadow: 0 0 30px 10px rgba(255, 105, 180, 0.6);
+        animation: revealPulse 2s infinite alternate, fadeIn 0.5s ease-out;
+        z-index: 10;
+        position: relative;
+      }
+
+      @keyframes revealPulse {
+        from { box-shadow: 0 0 20px 5px rgba(255, 105, 180, 0.5); transform: scale(1); }
+        to { box-shadow: 0 0 40px 15px rgba(255, 182, 193, 0.8); transform: scale(1.05); }
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.5); }
+        to { opacity: 1; transform: scale(1); }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Background Music -->
+    <audio id="bgMusic" loop preload="auto">
+      <source
+        src="music/song.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+
+    <div id="music-control" onclick="toggleMusic()">🎵</div>
+
+    <!-- Floating Background Hearts -->
+    <div class="hearts-bg" id="hearts-container"></div>
+
+    <!-- Opening Screen -->
+    <div id="opening-screen">
+      <div class="opening-box">
+        <h1>ນີ້ແມ່ນຂອງຂວັນນ້ອຍໆ<br>ສຳລັບເບບີ໋ 💌</h1>
+        <br />
+        <button onclick="openSurprise()">ເປີດເບິ່ງຂອງຂວັນວັນເກີດເລີຍ 🎁</button>
+      </div>
+    </div>
+
+    <!-- Main Screen -->
+    <div id="main-screen">
+      <!-- Birthday Message -->
+      <section id="birthday-section">
+        <div class="sparkle" style="top: 20px; left: 20px">✨</div>
+        <div
+          class="sparkle"
+          style="top: 40px; right: 30px; animation-delay: 0.5s"
+        >
+          ✨
+        </div>
+        <div
+          class="sparkle"
+          style="bottom: 30px; left: 10px; animation-delay: 1s"
+        >
+          ✨
+        </div>
+        <div
+          class="sparkle"
+          style="bottom: 20px; right: 20px; animation-delay: 1.5s"
+        >
+          ✨
+        </div>
+
+        <h1 class="glow-text">ສຸກສັນວັນເກີດເບບີ໋! 🎂💖</h1>
+        <p class="sweet-message">
+          ສຸກສັນວັນເກີດ 22ປີ ຂໍໃຫ້ມີຄວາມສຸກ ແລະ ຫາເງິນໄດ້ຫຼາຍໆ<br>ຮັກເດີ້ຈຸບໆ
+        </p>
+      </section>
+
+      <!-- Photo Gallery -->
+      <section id="gallery-section">
+        <h2>ຮຸບສຸດຟ້ຽວ 📸</h2>
+        <div class="gallery">
+          <!-- Placeholder images from Unsplash that look soft and aesthetic -->
+          <img
+            src="img/img1.jpg"
+            alt="Memory"
+            onclick="zoomImage(this)"
+          />
+          <img
+            src="img/img2.jpg"
+            alt="Memory"
+            onclick="zoomImage(this)"
+          />
+          <img
+            src="img/img3.jpg"
+            alt="Memory"
+            onclick="zoomImage(this)"
+          />
+          <img
+            src="img/img4.jpg"
+            alt="Memory"
+            onclick="zoomImage(this)"
+          />
+          <img
+            src="img/img5.jpg"
+            alt="Memory"
+            onclick="zoomImage(this)"
+          />
+          <img
+            src="img/img6.jpg"
+            alt="Memory"
+            onclick="zoomImage(this)"
+          />
+        </div>
+      </section>
+
+      <!-- Fireworks Button -->
+      <section id="fireworks-section">
+        <h2>ອູ້ເຢ້! 🎉</h2>
+        <p style="margin-bottom: 15px; color: #666">ກົດເພື່ອຮ່າຍເວດມົນ!</p>
+        <button onclick="triggerFireworks()">ສະຫຼອງເລີຍ 🎆</button>
+      </section>
+
+      <!-- Heart Game -->
+      <section id="game-section">
+        <h2>ເກມຫົວໃຈແຫ່ງຄວາມຮັກ ❤️</h2>
+        <p style="margin-bottom: 20px; color: #666">
+          ລອງກົດທີ່ຫົວໃຈເບິ່ງດຸ ວ່າຈະມີຫຍັງເກີດຂຶ້ນ!
+        </p>
+        <div id="interactive-heart" onclick="growHeart()">❤️</div>
+        <img id="revealed-image" src="img/imgS.png" alt="Surprise Image!" />
+        <div id="game-message">ຕູ້ມມມ!! 💖</div>
+      </section>
+    </div>
+
+    <!-- Container for playful cats -->
+    <div id="cats-container"></div>
+
+    <script>
+      // Setup floating hearts background
+      function createFloatingHearts() {
+        const container = document.getElementById("hearts-container");
+        const hearts = ["💖", "💕", "💗", "💓", "🌸", "😽", "😻", "😽"];
+
+        setInterval(() => {
+          const heart = document.createElement("div");
+          heart.classList.add("heart-float");
+          heart.innerText = hearts[Math.floor(Math.random() * hearts.length)];
+
+          // Random position and size
+          heart.style.left = Math.random() * 100 + "vw";
+          heart.style.fontSize = Math.random() * 20 + 10 + "px";
+          heart.style.animationDuration = Math.random() * 5 + 5 + "s";
+
+          container.appendChild(heart);
+
+          // Remove heart after animation
+          setTimeout(() => {
+            heart.remove();
+          }, 10000);
+        }, 300);
+      }
+      
+      // Setup floating cats background
+      function createFloatingCats() {
+        const container = document.getElementById("cats-container");
+        const cats = ["🐱", "🐈", "😻"];
+        
+        setInterval(() => {
+          // Limit total number of cats on screen
+          if (container.children.length > 8) return;
+          
+          const cat = document.createElement("div");
+          cat.classList.add("cat-float");
+          cat.innerText = cats[Math.floor(Math.random() * cats.length)];
+
+          // Random start position and size
+          cat.style.left = Math.random() * 90 + 5 + "vw"; 
+          let size = Math.random() * 1.5 + 1.5;
+          cat.style.fontSize = size + "rem";
+          
+          let duration = Math.random() * 10 + 15; // Slow, dreamy float taking 15-25 seconds
+          cat.style.animationDuration = duration + "s";
+
+          container.appendChild(cat);
+
+          // Remove cat after it floats away
+          setTimeout(() => {
+            cat.remove();
+          }, duration * 1000);
+        }, 3000);
+      }
+      
+      // Paw print click effect
+      document.addEventListener("click", function(e) {
+        // Exclude interactive elements to avoid blocking clicks inside buttons or inputs
+        // By checking if the clicked target isn't explicitly something with its own heavy logic
+        const paw = document.createElement("div");
+        paw.classList.add("paw-print");
+        paw.innerText = "🐾";
+        paw.style.left = e.pageX + "px";
+        paw.style.top = e.pageY + "px";
+        document.body.appendChild(paw);
+        
+        setTimeout(() => {
+          paw.remove();
+        }, 1000);
+      });
+      
+      // Heart pop on button clicks
+      const buttons = document.querySelectorAll('button');
+      buttons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            const heart = document.createElement('div');
+            heart.classList.add('button-heart-pop');
+            heart.innerText = ['💖', '💕', '💗'][Math.floor(Math.random() * 3)];
+            
+            // Append to body and position near click
+            document.body.appendChild(heart);
+            heart.style.left = e.pageX + 'px';
+            heart.style.top = e.pageY + 'px';
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 1000);
+        });
+      });
+      
+      // Scroll spy for smooth section fade-in
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+      }, {
+        threshold: 0.1
+      });
+
+      // Initialize music
+      const bgMusic = document.getElementById("bgMusic");
+      let isMusicPlaying = false;
+
+      function toggleMusic() {
+        const icon = document.getElementById("music-control");
+        if (isMusicPlaying) {
+          bgMusic.pause();
+          icon.innerText = "🔇";
+        } else {
+          bgMusic
+            .play()
+            .catch((e) =>
+              console.log("Audio play failed, user must interact first:", e),
+            );
+          icon.innerText = "🎵";
+        }
+        isMusicPlaying = !isMusicPlaying;
+      }
+
+      // Opening Surprise Logic
+      function openSurprise() {
+        const opening = document.getElementById("opening-screen");
+        const main = document.getElementById("main-screen");
+
+        // Start music automatically on user interaction
+        if (!isMusicPlaying) {
+          toggleMusic();
+        }
+
+        // Confetti explosion
+        triggerFireworks();
+
+        // Fade transition
+        opening.style.opacity = "0";
+        setTimeout(() => {
+          opening.style.display = "none";
+          main.style.visibility = "visible";
+          main.style.position = "relative"; // remove absolute to flow normally
+          main.style.opacity = "1";
+
+          // Start background animations
+          createFloatingHearts();
+          createFloatingCats();
+          
+          // Observe sections for scroll animations
+          document.querySelectorAll('section').forEach(sec => observer.observe(sec));
+          // Force visibility on the first section immediately
+          setTimeout(() => document.getElementById('birthday-section').classList.add('visible'), 200);
+
+        }, 1000);
+      }
+
+      // Custom Fireworks using canvas-confetti
+      function triggerFireworks() {
+        const duration = 3 * 1000;
+        const animationEnd = Date.now() + duration;
+        const defaults = {
+          startVelocity: 30,
+          spread: 360,
+          ticks: 60,
+          zIndex: 0,
+        };
+
+        function randomInRange(min, max) {
+          return Math.random() * (max - min) + min;
+        }
+
+        const interval = setInterval(function () {
+          const timeLeft = animationEnd - Date.now();
+
+          if (timeLeft <= 0) {
+            return clearInterval(interval);
+          }
+
+          const particleCount = 50 * (timeLeft / duration);
+
+          confetti(
+            Object.assign({}, defaults, {
+              particleCount,
+              origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+            }),
+          );
+          confetti(
+            Object.assign({}, defaults, {
+              particleCount,
+              origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+            }),
+          );
+        }, 250);
+      }
+
+      // Gallery Zoom simple effect with cat pop
+      function zoomImage(img) {
+        // Revert all other images
+        const images = document.querySelectorAll(".gallery img");
+        images.forEach((i) => {
+          if (i !== img) {
+            i.style.transform = "scale(1)";
+            i.style.zIndex = "1";
+          }
+        });
+
+        // Toggle current image
+        if (img.style.transform === "scale(1.15)") {
+          img.style.transform = "scale(1)";
+          img.style.zIndex = "1";
+        } else {
+          img.style.transform = "scale(1.15)";
+          img.style.zIndex = "10";
+          
+          // Show big 😻 emoji
+          const rect = img.getBoundingClientRect();
+          const cat = document.createElement("div");
+          cat.classList.add("button-heart-pop"); // We can reuse this animation
+          cat.innerText = "😻";
+          cat.style.fontSize = "4rem"; // Make it big
+          cat.style.zIndex = "1000";
+          
+          // Position it over the center of the image
+          cat.style.left = (rect.left + rect.width / 2) + "px";
+          // Use scrollY to adjust for the page scroll position
+          cat.style.top = (rect.top + window.scrollY + rect.height / 2) + "px";
+          
+          document.body.appendChild(cat);
+          
+          setTimeout(() => {
+            cat.remove();
+          }, 1000);
+        }
+      }
+
+      // Heart Game Logic
+      let heartClicks = 0;
+      const heartEl = document.getElementById("interactive-heart");
+      const gameMsg = document.getElementById("game-message");
+      const revealedImg = document.getElementById("revealed-image");
+
+      function growHeart() {
+        if (heartClicks >= 9) {
+          // Explode
+          heartExplosion(heartEl);
+          heartEl.style.display = "none";
+          
+          revealedImg.style.display = "block";
+          gameMsg.style.opacity = "1";
+
+          // Reset after delay
+          setTimeout(() => {
+            heartClicks = 0;
+            revealedImg.style.display = "none";
+            heartEl.style.display = "inline-block";
+            heartEl.style.transform = "scale(1)";
+            gameMsg.style.opacity = "0";
+          }, 4000);
+        } else {
+          heartClicks++;
+          const scale = 1 + heartClicks * 0.2;
+          heartEl.style.transform = `scale(${scale})`;
+        }
+      }
+
+      // Heart Confetti (Cat Explosion!)
+      function heartExplosion(element) {
+        const rect = element.getBoundingClientRect();
+        const x = (rect.left + rect.width / 2) / window.innerWidth;
+        const y = (rect.top + rect.height / 2) / window.innerHeight;
+
+        const scalar = 3; // Make emojis bigger
+        const catEmojis = ["🐱", "🐈", "😻"];
+        let shapes = [];
+        
+        try {
+          catEmojis.forEach(emoji => {
+              shapes.push(confetti.shapeFromText({
+                text: emoji,
+                scalar
+              }));
+          });
+        } catch (e) {
+          // Fallback
+        }
+
+        const options = {
+          particleCount: 150, // LOTS of cats
+          spread: 360,        // Explode in a full circle
+          origin: { x: x, y: y },
+          scalar: scalar,
+          startVelocity: 45,  // Shoot out quickly
+          colors: ["#ffffff", "#ffb6c1", "#ffc0cb"], 
+        };
+
+        if (shapes.length > 0) {
+          options.shapes = shapes;
+        }
+
+        confetti(options);
+      }
+    </script>
+  </body>
+</html>
